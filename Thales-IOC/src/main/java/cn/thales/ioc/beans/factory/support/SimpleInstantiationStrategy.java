@@ -1,0 +1,29 @@
+package cn.thales.ioc.beans.factory.support;
+
+import cn.thales.ioc.beans.factory.BeanFactory;
+import cn.thales.ioc.beans.factory.config.BeanDefinition;
+
+import java.lang.reflect.Modifier;
+
+/**
+ * @author TestLove
+ * @version 1.0
+ * @date 2021/8/19 21:40
+ * @Description: null
+ */
+public class SimpleInstantiationStrategy implements InstantiationStrategy {
+    @Override
+    public Object instantiate(BeanDefinition beanDefinition, String beanName, BeanFactory owner) {
+        Class<?> beanClass = beanDefinition.getBeanClass();
+
+        try {
+            if (beanClass.isInterface()|| Modifier.isAbstract(beanClass.getModifiers())) {
+                return null;
+            }
+            return beanClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}
