@@ -68,7 +68,7 @@ public class ClassPathBeanDefinitionScanner {
     }
     boolean isCandidateComponent(Class<?> clazz){
         Component declaredAnnotation = clazz.getDeclaredAnnotation(Component.class);
-        return declaredAnnotation!=null;
+        return declaredAnnotation!=null&&!clazz.isInterface();
     }
 
     ;

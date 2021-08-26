@@ -1,4 +1,4 @@
-package thales.example;
+package cn.thales.example;
 
 import cn.thales.ioc.context.event.ApplicationContextEvent;
 

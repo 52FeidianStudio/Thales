@@ -20,6 +20,7 @@ public class AnnotationBeanDefinition implements BeanDefinition {
     private List<PropertyValue> propertiesValues;
     private boolean abstractTag;
     private boolean interfaceTag;
+    private boolean factoryBean;
 
     public AnnotationBeanDefinition(String beanName, Class clazz) {
         this.beanName = beanName;
@@ -80,6 +81,15 @@ public class AnnotationBeanDefinition implements BeanDefinition {
     @Override
     public boolean isInterfaceTag() {
         return interfaceTag;
+    }
+
+    @Override
+    public boolean isFactoryBean() {
+        return factoryBean;
+    }
+
+    public void setFactoryBean(boolean factoryBean) {
+        this.factoryBean = factoryBean;
     }
 
     public void setAliases(String[] aliases) {

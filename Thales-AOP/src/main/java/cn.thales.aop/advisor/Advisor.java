@@ -1,6 +1,9 @@
 package cn.thales.aop.advisor;
 
-import jdk.internal.org.objectweb.asm.commons.AdviceAdapter;
+
+import cn.thales.aop.advice.Advice;
+
+
 
 /**
  * @author TestLove
@@ -9,5 +12,10 @@ import jdk.internal.org.objectweb.asm.commons.AdviceAdapter;
  * @Description: null
  */
 public interface Advisor {
+    /**
+     * 获取Advice
+     * @return
+     */
+    Advice getAdvice();
 
 }

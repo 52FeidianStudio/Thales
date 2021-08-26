@@ -1,4 +1,4 @@
-package thales.custom;
+package cn.thales.custom;
 
 import cn.thales.ioc.annotation.Component;
 import cn.thales.ioc.beans.factory.config.BeanPostProcessor;
@@ -9,7 +9,7 @@ import cn.thales.ioc.beans.factory.config.BeanPostProcessor;
  * @date 2021/8/21 11:41
  * @Description: null
  */
-@Component
+//@Component
 public class CustomerBeanProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) {

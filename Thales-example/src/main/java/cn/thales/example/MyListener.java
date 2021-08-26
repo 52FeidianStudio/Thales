@@ -1,4 +1,4 @@
-package thales.example;
+package cn.thales.example;
 
 import cn.thales.ioc.annotation.Component;
 import cn.thales.ioc.context.ApplicationListener;

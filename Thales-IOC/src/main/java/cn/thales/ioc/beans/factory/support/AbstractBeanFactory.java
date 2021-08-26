@@ -2,6 +2,7 @@ package cn.thales.ioc.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.thales.ioc.beans.factory.ConfigurableListableBeanFactory;
+import cn.thales.ioc.beans.factory.FactoryBean;
 import cn.thales.ioc.beans.factory.config.BeanDefinition;
 import cn.thales.ioc.beans.factory.config.BeanPostProcessor;
 import cn.thales.ioc.beans.factory.config.BeanReference;
@@ -11,6 +12,7 @@ import cn.thales.ioc.beans.support.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author TestLove
@@ -18,9 +20,20 @@ import java.util.List;
  * @date 2021/8/17 20:42
  * @Description: null
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableListableBeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableListableBeanFactory {
     List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
     private InstantiationStrategy instantiationStrategy;
+
+    @Override
+    public boolean isFactoryBean(String beanName) {
+        Object beanInstance = getSingleton(beanName);
+        //如果有实例化对象,根据对象来判断
+        if (beanInstance != null) {
+            return (beanInstance instanceof FactoryBean);
+        }
+        //没有则根据BeanDefinition判断
+        return getBeanDefinition(beanName).isFactoryBean();
+    }
 
     @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
@@ -31,47 +44,41 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         this.beanPostProcessors=new ArrayList<>(beanPostProcessors);
     }
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[]args){
-        Object beanInstance = createBeanInstance(beanName,beanDefinition,args);
+        Object beanInstance = null;
+        try {
+            beanInstance = createBeanInstance(beanName,beanDefinition,args);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return beanInstance;
 
     };
-    protected Object createBeanInstance(String beanName, BeanDefinition beanDefinition,Object[]args){
-        Object beanInstance;
+    protected Object createBeanInstance(String beanName, BeanDefinition beanDefinition,Object[]args) throws IllegalAccessException {
+        Object beanInstance=null;
         //实例化对象
         if(beanDefinition.isInterfaceTag()||beanDefinition.isAbstractTag()){
             return null;
+        }
+        for (BeanPostProcessor beanPostProcessor:getBeanPostProcessors()) {
+            if(beanPostProcessor instanceof InstantiationAwareBeanPostProcessor){
+                InstantiationAwareBeanPostProcessor instantiationAwareBeanPostProcessor = (InstantiationAwareBeanPostProcessor) beanPostProcessor;
+               beanInstance = instantiationAwareBeanPostProcessor.postProcessBeforeInstantiation(beanDefinition.getBeanClass(),beanName);
+            }
+        }
+        if(null!=beanInstance){
+            return beanInstance;
         }
         beanInstance = getInstantiationStrategy().instantiate(beanDefinition,beanName,this);
 
         //填充属性
         populateBean(beanName,beanDefinition,beanInstance);
 
+        //初始化
         initializeBean(beanName,beanInstance,beanDefinition);
         return beanInstance;
 
     };
     protected void populateBean(String beanName, BeanDefinition mbd, Object bean){
-//        Field[] fields = bean.getClass().getDeclaredFields();
-//        for (Field field : fields) {
-//            field.setAccessible(true);
-//            //自定义类型注入
-//            if(field.getAnnotation(Autowired.class)!=null) {
-//                Autowired annotation = field.getAnnotation(Autowired.class);
-////                String value = annotation.value();
-//                try {
-//                if (containsBean(field.getName())) {
-//                        field.set(bean,getSingleton(field.getName()));
-//
-//                } else {
-//                    getSingleton(field.getName());
-//
-//                    field.set(bean, getSingleton(field.getName()));
-//                }
-//                } catch (IllegalAccessException e) {
-//                    e.printStackTrace();
-//            }
-//        }
-//        }
 
         //在注入属性之前进一步进行特性化修改
         List<PropertyValue> propertiesValues = mbd.getPropertiesValues();
@@ -89,8 +96,29 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             Object newValue = oldValue;
             if(oldValue instanceof BeanReference){
                 BeanReference beanReference = (BeanReference) oldValue;
-                newValue = getBean(beanReference.getBeanName());
+                String[] beanNamesByType = new String[0];
+                //此处可以根据配置文件来指定接口实现类型,默认是第一个实现类
+                beanNamesByType = getBeanNamesByType(beanReference.getClazz());
+                if(beanNamesByType.length > 0){
+                    newValue = getBean(beanNamesByType[0]);
+                }else {
+                    newValue = null;
+                }
+                //如果容器自身的BeanFactory无法找到,则由外部提供的BeanFactory加载
+                if(newValue==null){
+                    Map<String, FactoryBean> beansOfType = getBeansOfType(FactoryBean.class);
+                    Collection<FactoryBean> values = beansOfType.values();
+                    for (FactoryBean value: values) {
+                        if(beanReference.getClazz()==value.getObjectType()){
+                            newValue = value.getObject();
+                            break;
+                        }
+                    }
+
+                }
             }
+
+            //注入属性
             BeanUtil.setFieldValue(bean,propertiesValue.getName(), newValue);
 
         }
@@ -141,14 +169,46 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
     @Override
+    public Object getBean(String name) {
+        return doGetBean(name);
+    }
+    protected Object doGetBean(String name){
+        //查找是否为已经注册的实例
+        Object singleton = getSingleton(name);
+        Object beanInstance;
+        if(singleton!=null){
+            beanInstance = getObjectForBeanInstance(singleton,name,name);
+            return beanInstance;
+        }
+
+        //重新创建bean
+        singleton = createBean(name, getBeanDefinition(name), null);
+
+        //注册
+        registerSingleton(name,singleton);
+        beanInstance = getObjectForBeanInstance(singleton,name,name);
+        return beanInstance;
+    }
+    protected Object getObjectForBeanInstance(Object beanInstance, String name,String beanName){
+        //不是FactoryBean直接返回
+        if (!(beanInstance instanceof FactoryBean)) {
+            return beanInstance;
+        }
+        //是FactoryBean则从FactoryBean中获取对应bean
+        Object object = null;
+        object = getObjectFromFactoryBean((FactoryBean) beanInstance, beanName);
+        return object;
+
+    }
+    @Override
     public Object getSingleton(String beanName) {
         Object singleton = super.getSingleton(beanName);
-        if(singleton != null){
-            return singleton;
-        }
-        Object bean = createBean(beanName, getBeanDefinition(beanName), null);
-        registerSingleton(beanName,bean);
-        return bean;
+//        Object bean = createBean(beanName, getBeanDefinition(beanName), null);
+//        if(bean != null){
+//            registerSingleton(beanName,bean);
+//        }
+
+        return singleton;
 
     }
 

@@ -17,10 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AnnotationBeanFactory extends AbstractBeanFactory implements BeanDefinitionRegistry {
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
     List<String> beanDefinitionsName = new ArrayList<>();
-    @Override
-    public Object getBean(String name) {
-        return getSingleton(name);
-    }
 
     @Override
     public boolean containsBean(String name) {
@@ -46,11 +42,14 @@ public class AnnotationBeanFactory extends AbstractBeanFactory implements BeanDe
     public String[] getBeanNamesByType(Class<?> type) {
         ArrayList<String> strings = new ArrayList<>();
         for (String name : this.beanDefinitionsName) {
-            Class<?>[] interfaces = getBeanDefinition(name).getBeanClass().getInterfaces();
-            for(Class< ? > inter:interfaces){
-                if(inter==type){
-                    strings.add(name);
-                }
+//            Class<?>[] interfaces = getBeanDefinition(name).getBeanClass().getInterfaces();
+//            for(Class< ? > inter:interfaces){
+//                if(inter==type){
+//                    strings.add(name);
+//                }
+//            }
+            if(type.isAssignableFrom(getBeanDefinition(name).getBeanClass())){
+                strings.add(name);
             }
 
         }
@@ -74,7 +73,7 @@ public class AnnotationBeanFactory extends AbstractBeanFactory implements BeanDe
 
     @Override
     public void preInstantiateSingletons() {
-        List<String> beanDefinitionsName = this.beanDefinitionsName;
+        List<String> beanDefinitionsName = new ArrayList<>(this.beanDefinitionsName);
         for(String beanDefinitionName:beanDefinitionsName){
             getBean(beanDefinitionName);
         }

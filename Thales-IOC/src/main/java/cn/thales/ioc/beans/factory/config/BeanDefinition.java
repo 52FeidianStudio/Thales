@@ -52,4 +52,10 @@ public interface BeanDefinition {
      * @return
      */
     public boolean isInterfaceTag() ;
+
+    /**
+     * 判断是否为FactoryBean
+     * @return
+     */
+    public boolean isFactoryBean();
 }

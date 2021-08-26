@@ -17,7 +17,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      * @param beanName
      * @return
      */
-    Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName);
+    Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws IllegalAccessException;
 
     /**
      * 在bean实例化之后做处理

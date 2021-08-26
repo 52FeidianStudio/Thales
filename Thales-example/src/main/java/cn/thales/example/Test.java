@@ -1,4 +1,4 @@
-package thales.example;
+package cn.thales.example;
 
 import java.util.HashMap;
 import java.util.Map;

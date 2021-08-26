@@ -1,4 +1,4 @@
-package thales.custom;
+package cn.thales.custom;
 
 import cn.thales.ioc.annotation.Component;
 import cn.thales.ioc.annotation.Value;
@@ -9,7 +9,7 @@ import cn.thales.ioc.annotation.Value;
  * @date 2021/8/6 8:43
  * @Description: null
  */
-@Component
+//@Component
 public class B {
 @Value("zqq")
     String name;

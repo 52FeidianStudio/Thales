@@ -16,12 +16,13 @@ import java.util.Map;
 public class AnnotationConfigApplicationContext extends AbstractApplicationContext {
     private AnnotationBeanDefinitionReader reader;
     private ClassPathBeanDefinitionScanner scanner;
-    public AnnotationConfigApplicationContext(String...basePackage) throws IOException {
+    public AnnotationConfigApplicationContext(String...basePackage) throws IOException, ClassNotFoundException {
         assert basePackage!=null;
         setBeanFactory(new AnnotationBeanFactory());
         scanner = new ClassPathBeanDefinitionScanner(this,basePackage);
         reader = new AnnotationBeanDefinitionReader(this);
         refresh();
+//        Class.forName("cn.thales.aop.DefaultAdvisorAutoProxyCreator");
 
     }
     public void scan(String...basePackage){

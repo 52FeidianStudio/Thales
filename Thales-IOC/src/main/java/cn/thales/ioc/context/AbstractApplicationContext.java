@@ -10,6 +10,7 @@ import cn.thales.ioc.beans.factory.config.BeanPostProcessor;
 import cn.thales.ioc.beans.factory.support.BeanDefinitionRegistry;
 import cn.thales.ioc.context.config.ConfigurableApplicationContext;
 import cn.thales.ioc.context.event.*;
+import cn.thales.ioc.context.support.ApplicationContextAwareProcessor;
 import cn.thales.ioc.core.io.Resource;
 
 import java.io.IOException;
@@ -60,11 +61,12 @@ public  abstract class AbstractApplicationContext implements ConfigurableApplica
     };
 
     protected  void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory){
-      String[] beanNames = beanFactory.getBeanNamesByType(BeanPostProcessor.class);
+        String[] beanNames = beanFactory.getBeanNamesByType(BeanPostProcessor.class);
+        beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(beanFactory));
         for (String beanName:beanNames) {
             beanFactory.addBeanPostProcessor((BeanPostProcessor) getBean(beanName));
         }
-        beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
 
     };
 

@@ -21,6 +21,11 @@
             <artifactId>Thales-IOC</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>cn.feidian</groupId>
+            <artifactId>Thales-AOP</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -15,4 +15,11 @@ public interface ConfigurableBeanFactory extends BeanFactory, SingletonBeanRegis
      * @param beanPostProcessor
      */
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /**
+     * 判断是否是FactoryBean
+     * @param beanName
+     * @return
+     */
+    boolean isFactoryBean(String beanName);
 }
