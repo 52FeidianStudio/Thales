@@ -2,6 +2,8 @@ package cn.thales.ioc.beans.factory.annotation;
 
 import cn.thales.ioc.annotation.Autowired;
 import cn.thales.ioc.annotation.Value;
+import cn.thales.ioc.beans.factory.BeanFactory;
+import cn.thales.ioc.beans.factory.BeanFactoryAware;
 import cn.thales.ioc.beans.factory.ConfigurableListableBeanFactory;
 import cn.thales.ioc.beans.factory.config.BeanReference;
 import cn.thales.ioc.beans.factory.config.InstantiationAwareBeanPostProcessor;
@@ -19,6 +21,11 @@ import java.util.List;
  */
 public class AutowiredAnnotationBeanPostProcessor implements InstantiationAwareBeanPostProcessor {
     private ConfigurableListableBeanFactory beanFactory;
+
+    public AutowiredAnnotationBeanPostProcessor(ConfigurableListableBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) {
         return bean;
@@ -41,7 +48,7 @@ public class AutowiredAnnotationBeanPostProcessor implements InstantiationAwareB
 
     @Override
     public List<PropertyValue> postProcessProperties(List<PropertyValue> pvs, Object bean, String beanName) {
-        Class<?> aClass = bean.getClass();
+        Class<?> aClass = beanFactory.getBeanDefinition(beanName).getBeanClass();
         Field[] declaredFields = aClass.getDeclaredFields();
         //处理@Autowired注解
         for(Field field:declaredFields){

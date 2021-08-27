@@ -1,4 +1,4 @@
-package cn.thales.custom;
+package cn.thales.config;
 
 import cn.thales.ioc.annotation.Component;
 import cn.thales.ioc.beans.factory.config.BeanPostProcessor;
@@ -9,13 +9,14 @@ import cn.thales.ioc.beans.factory.config.BeanPostProcessor;
  * @date 2021/8/21 11:41
  * @Description: null
  */
-//@Component
+@Component
 public class CustomerBeanProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) {
-        if(bean instanceof A){
-            ((A)bean).setAge(10);
-        }
+//        if(bean instanceof A){
+//            ((A)bean).setAge(10);
+//        }
+        System.out.println("为后置处理器");
 
         return null;
     }

@@ -1,6 +1,7 @@
 package cn.thales.ioc.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.thales.ioc.beans.factory.BeanFactoryAware;
 import cn.thales.ioc.beans.factory.ConfigurableListableBeanFactory;
 import cn.thales.ioc.beans.factory.FactoryBean;
 import cn.thales.ioc.beans.factory.config.BeanDefinition;
@@ -46,7 +47,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[]args){
         Object beanInstance = null;
         try {
+            //实例化
             beanInstance = createBeanInstance(beanName,beanDefinition,args);
+
+            //填充属性
+            populateBean(beanName,beanDefinition,beanInstance);
+
+            //初始化
+            initializeBean(beanName,beanInstance,beanDefinition);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -65,16 +73,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                beanInstance = instantiationAwareBeanPostProcessor.postProcessBeforeInstantiation(beanDefinition.getBeanClass(),beanName);
             }
         }
-        if(null!=beanInstance){
-            return beanInstance;
+        if(null==beanInstance){
+//            return beanInstance;
+            beanInstance = getInstantiationStrategy().instantiate(beanDefinition,beanName,this);
         }
-        beanInstance = getInstantiationStrategy().instantiate(beanDefinition,beanName,this);
+        addEarlySingletonObject(beanName,beanInstance);
 
-        //填充属性
-        populateBean(beanName,beanDefinition,beanInstance);
 
-        //初始化
-        initializeBean(beanName,beanInstance,beanDefinition);
+
         return beanInstance;
 
     };
@@ -124,11 +130,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         }
     }
     protected Object initializeBean(String beanName, Object bean, BeanDefinition mbd){
+        //注入容器相关属性
+        invokeAwareMethods(beanName, bean);
         applyBeanPostProcessorsBeforeInitialization(bean,beanName);
         applyBeanPostProcessorsAfterInitialization(bean,beanName);
         return  bean;
 
     }
+
+    protected  void invokeAwareMethods(String beanName, Object bean){
+        if(bean instanceof BeanFactoryAware){
+            ((BeanFactoryAware)bean).setBeanFactory(this);
+        }
+    };
 
     /**
      * 初始化方法之前执行

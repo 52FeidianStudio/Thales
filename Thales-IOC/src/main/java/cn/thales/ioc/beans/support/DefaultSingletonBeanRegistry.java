@@ -13,15 +13,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+    private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
 
     @Override
     public void registerSingleton(String beanName, Object singletonObject) {
         singletonObjects.putIfAbsent(beanName, singletonObject);
+        earlySingletonObjects.remove(beanName);
 
     }
 
     @Override
     public Object getSingleton(String beanName) {
-        return singletonObjects.get(beanName);
+        Object o = singletonObjects.get(beanName);
+        if (null == o) {
+            o = earlySingletonObjects.get(beanName);
+        }
+        return o;
+    }
+    public void addEarlySingletonObject(String beanName, Object singletonObject){
+        earlySingletonObjects.put(beanName,singletonObject);
     }
 }

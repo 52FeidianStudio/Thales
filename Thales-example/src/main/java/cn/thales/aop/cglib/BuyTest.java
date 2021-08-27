@@ -23,8 +23,6 @@ public class BuyTest {
             }else {
                 methodProxy.invokeSuper(o,objects);
             }
-
-//            method.invoke(o,objects);
             return o;
         });
         Buy o = (Buy)enhancer.create();

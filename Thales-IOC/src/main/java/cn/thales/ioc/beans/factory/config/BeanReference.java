@@ -4,7 +4,8 @@ package cn.thales.ioc.beans.factory.config;
  * @author TestLove
  * @version 1.0
  * @date 2021/8/21 22:02
- * @Description: null
+ * @Description:
+ *
  */
 public class BeanReference {
     String beanName;

@@ -41,6 +41,8 @@ public class RegexMethodPointcutAdvisor extends AbstractPointcutAdvisor {
 
     public void setPatterns(String... patterns) {
         this.patterns = patterns;
+        pointcut.initPatternRepresentation(patterns);
+
     }
 
     @Override

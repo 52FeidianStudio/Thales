@@ -20,9 +20,7 @@ public class AnnotationConfigApplicationContext extends AbstractApplicationConte
         assert basePackage!=null;
         setBeanFactory(new AnnotationBeanFactory());
         scanner = new ClassPathBeanDefinitionScanner(this,basePackage);
-        reader = new AnnotationBeanDefinitionReader(this);
         refresh();
-//        Class.forName("cn.thales.aop.DefaultAdvisorAutoProxyCreator");
 
     }
     public void scan(String...basePackage){

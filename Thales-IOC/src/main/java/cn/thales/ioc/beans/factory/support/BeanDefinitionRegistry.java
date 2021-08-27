@@ -6,7 +6,7 @@ import cn.thales.ioc.beans.factory.config.BeanDefinition;
  * @author TestLove
  * @version 1.0
  * @date 2021/8/16 21:34
- * @Description: null
+ * @Description: 注册BeanDefinition
  */
 public interface BeanDefinitionRegistry {
     /**

@@ -1,4 +1,4 @@
-package cn.thales.custom.aop;
+package cn.thales.config.aop;
 
 import cn.thales.aop.advice.MethodBeforeAdvice;
 import cn.thales.ioc.annotation.Component;
@@ -13,10 +13,10 @@ import java.lang.reflect.Method;
  * @Description: null
  */
 @Component
-@JoinPoint()
+@JoinPoint(classPattern = "",methodPattern = "select.*")
 public class MyAdvice implements MethodBeforeAdvice {
     @Override
     public void before(Method method, Object[] args, Object target) throws Throwable {
-        System.out.println("我是前缀");
+        System.out.println("执行方法名称--:"+method.getName());
     }
 }

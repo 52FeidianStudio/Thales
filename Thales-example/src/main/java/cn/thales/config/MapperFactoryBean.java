@@ -1,10 +1,10 @@
-package cn.thales.custom.factorybean;
+package cn.thales.config;
 
 import cn.thales.ioc.annotation.Component;
 import cn.thales.ioc.beans.factory.FactoryBean;
+import cn.thales.mapper.IUserMapper;
+import cn.thales.mapper.UserMapper;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
@@ -22,7 +22,7 @@ public class MapperFactoryBean implements FactoryBean<IUserMapper> {
                 new Class[]{IUserMapper.class},
                 (proxy, method, args) -> {
                     System.out.println("被代理了");
-                    return method.invoke(proxy,args)+"哒哒哒哒哒哒";
+                    return "proxy";
                 });
     }
 

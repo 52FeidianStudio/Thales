@@ -57,7 +57,6 @@ public class ClassUtils {
                 String protocol = url.getProtocol();
                 // 如果是以文件的形式保存在服务器上
                 if ("file".equals(protocol)) {
-                    System.err.println("file类型的扫描");
                     // 获取包的物理路径
                     String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
                     // 以文件的方式扫描整个包下的文件 并添加到集合中
@@ -66,7 +65,6 @@ public class ClassUtils {
                 } else if ("jar".equals(protocol)) {
                     // 如果是jar包文件
                     // 定义一个JarFile
-                    System.err.println("jar类型的扫描");
                     JarFile jar;
                     try {
                         // 获取jar
@@ -108,8 +106,6 @@ public class ClassUtils {
                                                     .forName(packageName + '.'
                                                             + className));
                                         } catch (ClassNotFoundException e) {
-                                            // log
-                                            // .error("添加用户自定义视图类错误 找不到此类的.class文件");
                                             e.printStackTrace();
                                         }
                                     }
@@ -117,7 +113,6 @@ public class ClassUtils {
                             }
                         }
                     } catch (IOException e) {
-                        // log.error("在扫描用户定义视图时从jar包获取文件出错");
                         e.printStackTrace();
                     }
                 }
@@ -143,18 +138,11 @@ public class ClassUtils {
         File dir = new File(packagePath);
         // 如果不存在或者 也不是目录就直接返回
         if (!dir.exists() || !dir.isDirectory()) {
-            // log.warn("用户定义包名 " + packageName + " 下没有任何文件");
             return;
         }
         // 如果存在 就获取包下的所有文件 包括目录
-        File[] dirfiles = dir.listFiles(new FileFilter() {
-            // 自定义过滤规则 如果可以循环(包含子目录) 或则是以.class结尾的文件(编译好的java类文件)
-            @Override
-            public boolean accept(File file) {
-                return (recursive && file.isDirectory())
-                        || (file.getName().endsWith(".class"));
-            }
-        });
+        File[] dirfiles = dir.listFiles(file -> (recursive && file.isDirectory())
+                || (file.getName().endsWith(".class")));
         // 循环所有文件
         for (File file : dirfiles) {
             // 如果是目录 则继续扫描
@@ -168,11 +156,8 @@ public class ClassUtils {
                         file.getName().length() - 6);
                 try {
                     // 添加到集合中去
-                    //classes.add(Class.forName(packageName + '.' + className));
-                    //经过回复同学的提醒，这里用forName有一些不好，会触发static方法，没有使用classLoader的load干净
                     classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                 } catch (ClassNotFoundException e) {
-                    // log.error("添加用户自定义视图类错误 找不到此类的.class文件");
                     e.printStackTrace();
                 }
             }

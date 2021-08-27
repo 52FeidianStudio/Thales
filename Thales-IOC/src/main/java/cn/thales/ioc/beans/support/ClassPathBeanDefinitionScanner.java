@@ -48,6 +48,7 @@ public class ClassPathBeanDefinitionScanner {
 
     private Set<BeanDefinition> findCandidateComponents(String basePackage) {
         Set<BeanDefinition> candidates = new LinkedHashSet<>();
+
         List<? extends Resource> resources = getResourcePatternResolver().getResources(basePackage);
         for(Resource resource:resources){
             if(resource instanceof ClassPathResource){

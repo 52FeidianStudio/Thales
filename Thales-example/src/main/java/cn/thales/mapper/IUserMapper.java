@@ -1,5 +1,6 @@
-package cn.thales.custom.factorybean;
+package cn.thales.mapper;
 
+import cn.thales.entity.Accounts;
 import cn.thales.ioc.annotation.Component;
 
 /**
@@ -8,7 +9,8 @@ import cn.thales.ioc.annotation.Component;
  * @date 2021/8/24 12:13
  * @Description: null
  */
-@Component
+
 public interface IUserMapper {
-    String selectName();
+    String selectUserInfo();
+    String selectAccounts();
 }

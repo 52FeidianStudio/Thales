@@ -20,9 +20,7 @@ public class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) {
-        if(bean instanceof BeanFactoryAware){
-            ((BeanFactoryAware)bean).setBeanFactory(beanFactory);
-        }
+
         return bean;
     }
 

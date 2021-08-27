@@ -17,4 +17,6 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Appl
      *用于进行上下文的配置刷新
      */
     void refresh() throws IOException;
+    void close();
+    void registerShutdownHook();
 }

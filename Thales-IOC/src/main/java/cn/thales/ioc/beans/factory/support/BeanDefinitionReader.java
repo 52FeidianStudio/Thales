@@ -29,6 +29,12 @@ public interface BeanDefinitionReader {
      * @return
      */
     int loadBeanDefinition(Resource... resource);
+
+    /**
+     * 根据位置加载BeanDefinition
+     * @param location
+     * @return
+     */
     int loadBeanDefinition(String location);
 
 

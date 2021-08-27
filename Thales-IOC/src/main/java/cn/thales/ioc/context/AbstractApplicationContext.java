@@ -30,6 +30,8 @@ public  abstract class AbstractApplicationContext implements ConfigurableApplica
     private ApplicationEventMulticaster applicationEventMulticaster;
     @Override
     public void refresh() throws IOException {
+
+        prepareBeanFactory(beanFactory);
         registerBeanDefinition(new AnnotationBeanDefinition("testListener",TestListener.class));
         //初始化事件广播器
         initApplicationEventMulticaster();
@@ -44,9 +46,17 @@ public  abstract class AbstractApplicationContext implements ConfigurableApplica
         finishBeanFactoryInitialization(beanFactory);
 
         //
-        close();
+        finishRefresh();
 
     }
+
+    protected  void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory){
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(beanFactory));
+    };
+
+    protected  void finishRefresh(){
+        publishEvent(new ContextRefreshedEvent(this));
+    };
 
     protected  void registerListeners(){
         Map<String, ApplicationListener> beansOfType = getBeansOfType(ApplicationListener.class);
@@ -62,8 +72,7 @@ public  abstract class AbstractApplicationContext implements ConfigurableApplica
 
     protected  void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory){
         String[] beanNames = beanFactory.getBeanNamesByType(BeanPostProcessor.class);
-        beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
-        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(beanFactory));
+        beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor(beanFactory));
         for (String beanName:beanNames) {
             beanFactory.addBeanPostProcessor((BeanPostProcessor) getBean(beanName));
         }
@@ -135,10 +144,16 @@ public  abstract class AbstractApplicationContext implements ConfigurableApplica
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         publishEvent(new ContextClosedEvent(this));
 
     }
+
+    @Override
+    public void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+    }
+
     protected BeanFactory getBeanFactory(){
         return beanFactory;
     }
