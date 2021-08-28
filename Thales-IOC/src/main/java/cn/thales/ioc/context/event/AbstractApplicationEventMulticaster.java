@@ -45,12 +45,12 @@ public abstract class AbstractApplicationEventMulticaster implements Application
     }
 
     /**
-     * 是通过每个监听器实例化时的泛型参数来判断的,也就是说,此处,一个监听器只能监听一个事件
+     * 是通过每个监听器实例化时的泛型参数来判断的,也就是说,此处,一个监听器只能监听一类事件
      * @param listener
      * @param event
      * @return
      */
-    public static boolean supportEvent(ApplicationListener<ApplicationEvent> listener,ApplicationEvent event){
+    public boolean supportEvent(ApplicationListener<ApplicationEvent> listener,ApplicationEvent event){
         //先获取Class对象
         Class<? extends ApplicationListener> listenerClass = listener.getClass();
 

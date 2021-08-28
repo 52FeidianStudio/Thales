@@ -1,6 +1,5 @@
 package cn.thales.ioc.beans.factory.support;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.thales.ioc.beans.factory.BeanFactoryAware;
 import cn.thales.ioc.beans.factory.ConfigurableListableBeanFactory;
 import cn.thales.ioc.beans.factory.FactoryBean;
@@ -10,6 +9,7 @@ import cn.thales.ioc.beans.factory.config.BeanReference;
 import cn.thales.ioc.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import cn.thales.ioc.beans.support.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -84,7 +84,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         return beanInstance;
 
     };
-    protected void populateBean(String beanName, BeanDefinition mbd, Object bean){
+    protected void populateBean(String beanName, BeanDefinition mbd, Object bean) throws IllegalAccessException {
 
         //在注入属性之前进一步进行特性化修改
         List<PropertyValue> propertiesValues = mbd.getPropertiesValues();
@@ -125,7 +125,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             }
 
             //注入属性
-            BeanUtil.setFieldValue(bean,propertiesValue.getName(), newValue);
+            for(Field field:mbd.getBeanClass().getDeclaredFields()){
+                field.setAccessible(true);
+                if (field.getName().equals(propertiesValue.getName())&&field.getType().isAssignableFrom(newValue.getClass())) {
+                    field.set(bean,newValue);
+                }
+            }
 
         }
     }
