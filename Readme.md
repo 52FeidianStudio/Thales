@@ -18,21 +18,21 @@
 
 以下是`DefaultListableBeanFactory`的类图
 
-![image-20210824190714575](Thales.assets/image-20210824190714575-16298032363171.png)
+![image-20210824190714575](https://raw.githubusercontent.com/TestLove/Pictures/main/img/202203142045705.png)
 
 是不是顶不住
 
 我们再来看一张图
 
-![image-20210824191140329](Thales.assets/image-20210824191140329.png)
+![image-20210824191140329](https://raw.githubusercontent.com/TestLove/Pictures/main/img/202203142046379.png)
 
 第一张是`Spring5.0`的,第二张图是`Spring0.9`的,所以并没有必要在一开始就引入过多的设计复杂度
 
 我们再来看一套对比图
 
-![spring-0.9BeanFactory](Thales.assets/image-20210824191726968.png)
+![spring-0.9BeanFactory](https://raw.githubusercontent.com/TestLove/Pictures/main/img/202203142047421.png)
 
-![image-20210824191846497](Thales.assets/image-20210824191846497.png)
+![image-20210824191846497](https://raw.githubusercontent.com/TestLove/Pictures/main/img/202203142047139.png)
 
 哪一个是0.9的,哪一个是5.0的一目了然.
 
