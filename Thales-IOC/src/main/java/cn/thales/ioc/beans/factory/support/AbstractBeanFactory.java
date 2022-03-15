@@ -127,7 +127,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             //注入属性
             for(Field field:mbd.getBeanClass().getDeclaredFields()){
                 field.setAccessible(true);
-                if (field.getName().equals(propertiesValue.getName())&&field.getType().isAssignableFrom(newValue.getClass())) {
+                if (field.getName().equals(propertiesValue.getName())&&newValue!=null&&field.getType().isAssignableFrom(newValue.getClass())) {
                     field.set(bean,newValue);
                 }
             }

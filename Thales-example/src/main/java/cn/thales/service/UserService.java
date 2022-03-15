@@ -1,6 +1,8 @@
 package cn.thales.service;
 
 import cn.thales.entity.Accounts;
+import cn.thales.ioc.beans.factory.BeanFactory;
+import cn.thales.ioc.beans.factory.BeanFactoryAware;
 import cn.thales.mapper.IUserMapper;
 import cn.thales.ioc.annotation.Autowired;
 import cn.thales.ioc.annotation.Component;
@@ -13,7 +15,8 @@ import cn.thales.mapper.UserMapper;
  * @Description: null
  */
 @Component
-public class UserService {
+public class UserService implements BeanFactoryAware {
+    BeanFactory beanFactory;
     @Autowired
     private UserMapper userMapper;
     public String selectUserInfo(){
@@ -21,5 +24,14 @@ public class UserService {
     }
     public String selectUserCounts(){
         return userMapper.selectAccounts().toString();
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory factory) {
+        this.beanFactory = factory;
+
+    }
+    public BeanFactory getBeanFactory() {
+        return this.beanFactory;
     }
 }
