@@ -13,4 +13,12 @@ import cn.thales.ioc.annotation.Component;
 public class A {
     @Autowired
     B b;
+
+    public B getB() {
+        return b;
+    }
+
+    public void setB(B b) {
+        this.b = b;
+    }
 }

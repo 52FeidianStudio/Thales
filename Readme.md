@@ -18,7 +18,7 @@
 
 以下是`DefaultListableBeanFactory`的类图
 
-![image-20210824190714575](https://raw.githubusercontent.com/TestLove/Pictures/main/img/202203142045705.png)
+![image-20210824190714575](Thales.assets/image-20210824190714575.png)
 
 是不是顶不住
 

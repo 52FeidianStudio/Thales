@@ -16,7 +16,7 @@ public class CustomerBeanProcessor implements BeanPostProcessor {
 //        if(bean instanceof A){
 //            ((A)bean).setAge(10);
 //        }
-        System.out.println("为后置处理器");
+//        System.out.println("为后置处理器");
 
         return null;
     }
